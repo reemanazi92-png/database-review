@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مراجعة عملي – أساسيات قواعد البيانات</title>
+
+<!-- ربط مكتبة Prism.js لتلوين الأكواد -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f9fafb;
+        margin: 0;
+        padding: 20px;
+        color: #1f2937;
+    }
+    h1 {
+        text-align: center;
+        color: #111827;
+        margin-bottom: 30px;
+    }
+    h2 {
+        color: #111827;
+        margin-bottom: 10px;
+        border-left: 6px solid #2563eb;
+        padding-left: 10px;
+    }
+    .section {
+        background-color: #ffffff;
+        padding: 25px 30px;
+        margin-bottom: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        transition: transform 0.2s;
+    }
+    .section:hover {
+        transform: translateY(-3px);
+    }
+    /* تصميم الأزرار */
+    button {
+        background-color: #2563eb;
+        color: #ffffff;
+        padding: 10px 16px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        margin-top: 15px;
+        font-size: 14px;
+        transition: background-color 0.2s;
+    }
+    button:hover {
+        background-color: #1e40af;
+    }
+    .solution {
+        display: none;
+        margin-top: 15px;
+    }
+    .output {
+        background-color: #e0f2fe;
+        padding: 12px;
+        border-radius: 6px;
+        margin-top: 10px;
+        font-family: 'Courier New', monospace;
+        white-space: pre-wrap;
+        color: #0c4a6e;
+    }
+    p {
+        margin: 10px 0;
+        line-height: 1.6;
+    }
+</style>
+</head>
+<body>
+
+<h1>مراجعة عملي – أساسيات قواعد البيانات</h1>
+
+<!-- مثال قسم قاعدة البيانات -->
+<div class="section">
+    <h2>خطوة 1: إنشاء قاعدة البيانات</h2>
+    <p>إنشاء قاعدة بيانات باسم <strong>Classes</strong></p>
+    <button onclick="toggleSolution('db')">عرض الحل</button>
+    <div class="solution" id="db">
+        <pre><code class="language-sql">
+CREATE DATABASE IF NOT EXISTS Classes;
+USE Classes;
+        </code></pre>
+        <div class="output">تم إنشاء قاعدة البيانات Classes وتحديدها للاستخدام</div>
+    </div>
+</div>
+
+<!-- جدول Teachers -->
+<div class="section">
+    <h2>جدول 1: Teachers</h2>
+    <p>بيانات المعلمين مع فهرس على اسم المعلم</p>
+    <button onclick="toggleSolution('teachers')">عرض الحل</button>
+    <div class="solution" id="teachers">
+        <pre><code class="language-sql">
+CREATE TABLE Teachers (
+    TeacherID INT AUTO_INCREMENT PRIMARY KEY,
+    Teacher_name VARCHAR(40),
+    CourseID INT,
+    Salary INT
+);
+
+CREATE INDEX idx_teacher ON Teachers (Teacher_name);
+
+INSERT INTO Teachers (Teacher_name, CourseID, Salary) VALUES
+('Sara', 1, 5000),
+('Rawan', 2, 6200),
+('Maryam', 1, 5500),
+('Reem', 3, 7000);
+        </code></pre>
+        <div class="output">تم إنشاء جدول Teachers مع الفهرس وإدخال 4 سجلات</div>
+    </div>
+</div>
+
+<!-- جدول Courses -->
+<div class="section">
+    <h2>جدول 2: Courses</h2>
+    <p>بيانات المقررات الدراسية</p>
+    <button onclick="toggleSolution('courses')">عرض الحل</button>
+    <div class="solution" id="courses">
+        <pre><code class="language-sql">
+CREATE TABLE Courses (
+    CourseID INT PRIMARY KEY,
+    Course_name VARCHAR(20)
+);
+
+INSERT INTO Courses (CourseID, Course_name) VALUES
+(1, 'Computer'),
+(2, 'Math'),
+(3, 'English');
+        </code></pre>
+        <div class="output">تم إنشاء جدول Courses وإدخال 3 سجلات</div>
+    </div>
+</div>
+
+<!-- جدول Students -->
+<div class="section">
+    <h2>جدول 3: Students</h2>
+    <p>بيانات الطلاب المرتبطين بالمقررات</p>
+    <button onclick="toggleSolution('students')">عرض الحل</button>
+    <div class="solution" id="students">
+        <pre><code class="language-sql">
+CREATE TABLE Students (
+    StudentID INT AUTO_INCREMENT PRIMARY KEY,
+    Student_name VARCHAR(40),
+    CourseID INT,
+    EnrollmentDate DATE,
+    FOREIGN KEY (CourseID) REFERENCES Courses(CourseID)
+);
+
+INSERT INTO Students (Student_name, CourseID, EnrollmentDate) VALUES
+('Lena', 1, '2025-09-01'),
+('Noor', 2, '2025-09-02'),
+('Dalal', 3, '2025-09-03');
+        </code></pre>
+        <div class="output">تم إنشاء جدول Students وإدخال 3 سجلات</div>
+    </div>
+</div>
+
+<!-- استعلام المعلمات -->
+<div class="section">
+    <h2>استعلام: عرض بيانات المعلمات براتب أكثر من 5500</h2>
+    <button onclick="toggleSolution('query1')">عرض الحل</button>
+    <div class="solution" id="query1">
+        <pre><code class="language-sql">
+SELECT * 
+FROM Teachers
+WHERE Salary > 5500
+ORDER BY Salary DESC;
+        </code></pre>
+        <div class="output">
+TeacherID | Teacher_name | CourseID | Salary
+2         | Rawan        | 2        | 6200
+4         | Reem         | 3        | 7000
+        </div>
+    </div>
+</div>
+
+<!-- تعديل راتب Sara -->
+<div class="section">
+    <h2>تعديل راتب Sara</h2>
+    <button onclick="toggleSolution('updateSara')">عرض الحل</button>
+    <div class="solution" id="updateSara">
+        <pre><code class="language-sql">
+UPDATE Teachers
+SET Salary = 5800
+WHERE Teacher_name = 'Sara';
+        </code></pre>
+        <div class="output">تم تعديل راتب Sara إلى 5800</div>
+    </div>
+</div>
+
+<!-- حذف سجل Reem -->
+<div class="section">
+    <h2>حذف سجل Reem</h2>
+    <button onclick="toggleSolution('deleteReem')">عرض الحل</button>
+    <div class="solution" id="deleteReem">
+        <pre><code class="language-sql">
+DELETE FROM Teachers
+WHERE Teacher_name = 'Reem';
+        </code></pre>
+        <div class="output">تم حذف سجل Reem</div>
+    </div>
+</div>
+
+<!-- عرض التاريخ والوقت -->
+<div class="section">
+    <h2>عرض التاريخ والوقت الحالي</h2>
+    <button onclick="toggleSolution('datetime')">عرض الحل</button>
+    <div class="solution" id="datetime">
+        <pre><code class="language-sql">
+SELECT NOW() AS CurrentDateTime;
+        </code></pre>
+        <div class="output" id="currentTime"></div>
+    </div>
+</div>
+
+<!-- حذف بيانات جدول Courses -->
+<div class="section">
+    <h2>حذف جميع بيانات جدول Courses</h2>
+    <button onclick="toggleSolution('deleteCourses')">عرض الحل</button>
+    <div class="solution" id="deleteCourses">
+        <pre><code class="language-sql">
+DELETE FROM Courses;
+        </code></pre>
+        <div class="output">تم حذف جميع بيانات جدول Courses دون حذف بنية الجدول</div>
+    </div>
+</div>
+
+<script>
+function toggleSolution(id) {
+    const sol = document.getElementById(id);
+    if(sol.style.display === 'none' || sol.style.display === '') {
+        sol.style.display = 'block';
+        if(id==='datetime') {
+            document.getElementById('currentTime').textContent = new Date().toLocaleString();
+        }
+    } else {
+        sol.style.display = 'none';
+    }
+}
+</script>
+
+</body>
+</html>
